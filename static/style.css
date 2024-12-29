@@ -114,6 +114,45 @@ main {
     background-color: #038d5d;
 }
 
+/* Crop Selection Buttons */
+.crop-selection {
+    margin-top: 15px;
+}
+
+.crop-selection p {
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.crop-buttons {
+    display: flex;
+    flex-wrap: wrap; /* Allows buttons to wrap to the next line on smaller screens */
+    gap: 8px; /* Spacing between buttons */
+}
+
+.crop-button {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    border-radius: 20px; /* Pill-shaped buttons */
+    background-color: #f9f9f9;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.crop-button:hover,
+.crop-button:focus {
+    background-color: #eee;
+    outline: none;
+}
+
+.crop-button.selected {
+    background-color: #04aa6d;
+    color: #fff;
+    border-color: #04aa6d;
+}
+
 /* Prediction Result */
 .prediction-result {
     background-color: #fff;

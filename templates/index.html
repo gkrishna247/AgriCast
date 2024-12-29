@@ -22,7 +22,18 @@
                 <form method="POST">
                     <div class="input-group">
                         <label for="future_date">Enter Future Date:</label>
-                        <input type="date" id="future_date" name="future_date" required>
+                        <input type="date" id="future_date" name="future_date" required value="{{ default_date }}">
+                    </div>
+                    <div class="input-group crop-selection">
+                        <p>Select Crops to Display:</p>
+                        <div class="crop-buttons">
+                            {% for crop in available_crops %}
+                            <button type="button" class="crop-button" data-crop="{{ crop }}">
+                                {{ crop }}
+                            </button>
+                            {% endfor %}
+                            <input type="hidden" id="selected_crops" name="crops">
+                        </div>
                     </div>
                     <button type="submit" class="btn">Get Prediction</button>
                 </form>
@@ -62,5 +73,29 @@
             <p>© 2024 AgriCast by RAVEN</p>
         </div>
     </footer>
+    <script>
+        const cropButtons = document.querySelectorAll('.crop-button');
+        const selectedCropsInput = document.getElementById('selected_crops');
+
+        cropButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                updateSelectedCropsInput();
+            });
+        });
+
+        function updateSelectedCropsInput() {
+            const selectedCrops = Array.from(document.querySelectorAll('.crop-button.selected')).map(button => button.dataset.crop);
+            selectedCropsInput.value = JSON.stringify(selectedCrops);
+        }
+
+        // Select all crops by default
+        cropButtons.forEach(button => {
+            button.classList.add('selected');
+        });
+
+        // Initialize selected crops on page load (optional)
+        updateSelectedCropsInput();
+    </script>
 </body>
 </html>
