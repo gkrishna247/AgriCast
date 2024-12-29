@@ -17,7 +17,7 @@ except Exception as e:
     model = None
     scaler = None
 
-# Assume these are your column names used during training
+# column names used during training
 MODEL_COLUMNS = ['Rice', 'Wheat', 'Atta (Wheat)', 'Gram Dal', 'Tur/Arhar Dal']
 LOOK_BACK = 7  # Ensure this matches your training look_back
 
