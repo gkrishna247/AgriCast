@@ -2,38 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Commodity Price Prediction</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriCast - Commodity Price Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Commodity Price Prediction</h1>
-    <form method="POST">
-        <label for="future_date">Enter Future Date (YYYY-MM-DD):</label>
-        <input type="text" id="future_date" name="future_date" required>
-        <button type="submit">Predict</button>
-    </form>
+    <header>
+        <div class="container">
+            <h1><span class="brand">AgriCast</span> by <span class="team">RAVEN</span></h1>
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <section class="prediction-form">
+                <h2>Predict Future Commodity Prices</h2>
+                <form method="POST">
+                    <div class="input-group">
+                        <label for="future_date">Enter Future Date:</label>
+                        <input type="date" id="future_date" name="future_date" required>
+                    </div>
+                    <button type="submit" class="btn">Get Prediction</button>
+                </form>
+            </section>
 
-    {% if prediction_result %}
-        <h2>Prediction for {{ request.form['future_date'] }}</h2>
-        {% if prediction_result is string %}
-            <p>{{ prediction_result }}</p>
-        {% else %}
-            <table border="1">
-                <thead>
-                    <tr>
-                        {% for col in prediction_result.columns %}
-                            <th>{{ col }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        {% for value in prediction_result.iloc[0] %}
-                            <td>{{ value }}</td>
-                        {% endfor %}
-                    </tr>
-                </tbody>
-            </table>
-        {% endif %}
-    {% endif %}
+            {% if prediction_result is not none %}
+            <section class="prediction-result">
+                <h3>Prediction for {{ request.form['future_date'] }}</h3>
+                {% if prediction_result is string %}
+                <p class="error-message">{{ prediction_result }}</p>
+                {% else %}
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for col in prediction_result.columns %}
+                                <th>{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {% for value in prediction_result.iloc[0] %}
+                                <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+            </section>
+            {% endif %}
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>© 2024 AgriCast by RAVEN</p>
+        </div>
+    </footer>
 </body>
 </html>
