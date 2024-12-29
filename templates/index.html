@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Commodity Price Prediction</title>
+</head>
+<body>
+    <h1>Commodity Price Prediction</h1>
+    <form method="POST">
+        <label for="future_date">Enter Future Date (YYYY-MM-DD):</label>
+        <input type="text" id="future_date" name="future_date" required>
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction_result %}
+        <h2>Prediction for {{ request.form['future_date'] }}</h2>
+        {% if prediction_result is string %}
+            <p>{{ prediction_result }}</p>
+        {% else %}
+            <table border="1">
+                <thead>
+                    <tr>
+                        {% for col in prediction_result.columns %}
+                            <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for value in prediction_result.iloc[0] %}
+                            <td>{{ value }}</td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
