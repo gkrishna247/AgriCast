@@ -26,9 +26,12 @@
                     </div>
                     <div class="input-group crop-selection">
                         <p>Select Crops to Display:</p>
+                        <div class="crop-selection-controls">
+                            <button type="button" class="select-all-button selected">Deselect All</button>
+                        </div>
                         <div class="crop-buttons">
                             {% for crop in available_crops %}
-                            <button type="button" class="crop-button" data-crop="{{ crop }}">
+                            <button type="button" class="crop-button selected" data-crop="{{ crop }}">
                                 {{ crop }}
                             </button>
                             {% endfor %}
@@ -75,27 +78,44 @@
     </footer>
     <script>
         const cropButtons = document.querySelectorAll('.crop-button');
+        const selectAllButton = document.querySelector('.select-all-button');
         const selectedCropsInput = document.getElementById('selected_crops');
-
-        cropButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                this.classList.toggle('selected');
-                updateSelectedCropsInput();
-            });
-        });
 
         function updateSelectedCropsInput() {
             const selectedCrops = Array.from(document.querySelectorAll('.crop-button.selected')).map(button => button.dataset.crop);
             selectedCropsInput.value = JSON.stringify(selectedCrops);
         }
 
-        // Select all crops by default
+        cropButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                updateSelectAllButtonState();
+                updateSelectedCropsInput();
+            });
+        });
+
+        selectAllButton.addEventListener('click', function() {
+            const allSelected = Array.from(cropButtons).every(button => button.classList.contains('selected'));
+            cropButtons.forEach(button => {
+                button.classList.toggle('selected', !allSelected);
+            });
+            updateSelectAllButtonState();
+            updateSelectedCropsInput();
+        });
+
+        function updateSelectAllButtonState() {
+            const allSelected = Array.from(cropButtons).every(button => button.classList.contains('selected'));
+            selectAllButton.classList.toggle('selected', allSelected);
+            selectAllButton.textContent = allSelected ? 'Deselect All' : 'Select All';
+        }
+
+        // Initialize: Select all crops by default
         cropButtons.forEach(button => {
             button.classList.add('selected');
         });
 
-        // Initialize selected crops on page load (optional)
         updateSelectedCropsInput();
+        updateSelectAllButtonState();
     </script>
 </body>
 </html>

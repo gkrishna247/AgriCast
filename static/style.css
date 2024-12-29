@@ -127,13 +127,20 @@ main {
     font-weight: 500;
 }
 
+.crop-selection-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
 .crop-buttons {
     display: flex;
     flex-wrap: wrap; /* Allows buttons to wrap to the next line on smaller screens */
     gap: 8px; /* Spacing between buttons */
 }
 
-.crop-button {
+.crop-button, .select-all-button {
     padding: 8px 16px;
     border: 1px solid #ccc;
     border-radius: 20px; /* Pill-shaped buttons */
@@ -145,7 +152,9 @@ main {
 }
 
 .crop-button:hover,
-.crop-button:focus {
+.crop-button:focus,
+.select-all-button:hover,
+.select-all-button:focus {
     background-color: #eee;
     outline: none;
 }
@@ -154,6 +163,14 @@ main {
     background-color: #04aa6d;
     color: #fff;
     border-color: #04aa6d;
+}
+
+.select-all-button {
+    background-color: #e0e0e0;
+}
+
+.select-all-button.selected {
+    background-color: #c0c0c0;
 }
 
 /* Prediction Result */
