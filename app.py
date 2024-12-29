@@ -49,7 +49,7 @@ def predict_future_date(data, target_date_str, model, scaler, look_back, model_c
     end_date = data['Date'].max()
 
     if target_date <= end_date:
-        return data[data['Date'] == target_date][model_columns]
+        return data[data['Date'] == target_date][model_columns].map("{:.2f}".format)
     else:
         last_data = data.tail(look_back)[model_columns].values
         last_data_scaled = scaler.transform(last_data)
@@ -70,7 +70,7 @@ def predict_future_date(data, target_date_str, model, scaler, look_back, model_c
             last_data_scaled = new_input_scaled
             current_date += pd.DateOffset(days=1)
 
-        return pd.DataFrame([prediction], columns=model_columns)
+        return pd.DataFrame([prediction], columns=model_columns).map("{:.2f}".format)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
