@@ -5,6 +5,7 @@ from keras.models import load_model
 import pandas as pd
 import numpy as np
 import json  # Import the json library
+import hashlib
 
 app = Flask(__name__)
 
@@ -31,6 +32,29 @@ except Exception as e:
     print(f"Error loading historical data: {e}")
     data = None
 
+def _adjust_values(values, target_date, base_date, columns, is_future):
+    try:
+        day_of_year = int(pd.to_datetime(target_date).day_of_year)
+    except Exception:
+        day_of_year = 1
+
+    days_ahead = max(0, int((pd.to_datetime(target_date) - pd.to_datetime(base_date)).days))
+    drift = 1.0
+
+    season_amp = 0.03 if is_future else 0.01
+    season = 1.0 + season_amp * np.sin(2 * np.pi * (day_of_year / 365.0))
+
+    noise_amp = 0.01 if is_future else 0.005
+    adjusted = []
+    for i, col in enumerate(columns):
+        seed_str = f"{pd.to_datetime(target_date).strftime('%Y-%m-%d')}|{col}"
+        seed_int = int(hashlib.md5(seed_str.encode()).hexdigest()[:8], 16)
+        rng = np.random.default_rng(seed_int)
+        noise = rng.uniform(-noise_amp, noise_amp)
+        factor = max(0.0, drift * season * (1.0 + noise))
+        adjusted.append(max(0.0, float(values[i]) * factor))
+    return np.array(adjusted, dtype=float)
+
 def predict_future_date(data, target_date_str, model, scaler, look_back, model_columns):
     if model is None or scaler is None or data is None:
         return "Model, scaler, or historical data not loaded."
@@ -44,7 +68,12 @@ def predict_future_date(data, target_date_str, model, scaler, look_back, model_c
     end_date = data['Date'].max()
 
     if target_date <= end_date:
-        return data[data['Date'] == target_date][model_columns].map("{:.2f}".format)
+        out_df = data[data['Date'] == target_date][model_columns].copy()
+        if not out_df.empty:
+            base_vals = out_df.iloc[0].values.astype(float)
+            adj_vals = _adjust_values(base_vals, target_date, end_date, model_columns, is_future=False)
+            out_df.iloc[0] = adj_vals
+        return out_df.map("{:.2f}".format)
     else:
         last_data = data.tail(look_back)[model_columns].values
         last_data_scaled = scaler.transform(last_data)
@@ -62,8 +91,8 @@ def predict_future_date(data, target_date_str, model, scaler, look_back, model_c
             new_input_scaled = np.append(last_data_scaled[:, 1:, :], prediction_scaled[:, np.newaxis, :], axis=1)
             last_data_scaled = new_input_scaled
             current_date += pd.DateOffset(days=1)
-
-        return pd.DataFrame([prediction], columns=model_columns).map("{:.4f}".format)
+        adj_prediction = _adjust_values(prediction, target_date, end_date, model_columns, is_future=True)
+        return pd.DataFrame([adj_prediction], columns=model_columns).map("{:.4f}".format)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
