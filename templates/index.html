@@ -4,13 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriCast - Commodity Price Forecaster</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
     <header>
         <div class="container">
-            <h1>AgriCast - Commodity Price Forecaster</h1>
+            <h1><i class="fas fa-seedling"></i> AgriCast <span class="subtitle">Commodity Price Forecaster</span></h1>
         </div>
     </header>
 
@@ -18,14 +21,15 @@
         <div class="container">
             <div class="grid-container">
                 <aside class="form-card">
-                    <h2>Prediction Controls</h2>
+                    <h2><i class="fas fa-sliders-h"></i> Prediction Controls</h2>
                     <form method="POST">
                         <div class="input-group">
-                            <label for="future_date">Select Prediction Date</label>
-                            <input type="date" id="future_date" name="future_date" required value="{{ default_date }}">
+                            <label for="inline-datepicker"><i class="fas fa-calendar-alt"></i> Select Prediction Date</label>
+                            <div id="inline-datepicker" class="inline-datepicker"></div>
+                            <input type="hidden" id="future_date" name="future_date" required value="{{ default_date }}">
                         </div>
                         <div class="input-group crop-selection">
-                            <p>Select Commodities</p>
+                            <p><i class="fas fa-leaf"></i> Select Commodities</p>
                             <div class="crop-selection-controls">
                                 <button type="button" class="select-all-button">Select All</button>
                             </div>
@@ -38,7 +42,7 @@
                             </div>
                             <input type="hidden" id="selected_crops" name="crops" value='[]'>
                         </div>
-                        <button type="submit" class="btn">Forecast Prices</button>
+                        <button type="submit" class="btn"><i class="fas fa-chart-line"></i> Forecast Prices</button>
                     </form>
                 </aside>
 
@@ -50,7 +54,7 @@
 
                     {% if prediction_result is not none %}
                     <div class="prediction-result">
-                        <h3>Forecast for {{ request.form.get('future_date', default_date) }}</h3>
+                        <h3><i class="fas fa-bullseye"></i> Forecast for {{ request.form.get('future_date', default_date) }}</h3>
                         {% if prediction_result is string %}
                         <p class="error-message">{{ prediction_result }}</p>
                         {% else %}
@@ -76,6 +80,7 @@
                     </div>
                     {% else %}
                     <div class="placeholder">
+                        <i class="fas fa-chart-pie placeholder-icon"></i>
                         <h3>Welcome to AgriCast</h3>
                         <p>Use the controls on the left to select a date and commodities to forecast their future prices.</p>
                     </div>

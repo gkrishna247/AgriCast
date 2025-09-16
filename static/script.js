@@ -39,6 +39,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Initialize inline date picker (Flatpickr)
+    const inlineDatepickerEl = document.getElementById('inline-datepicker');
+    const futureDateHidden = document.getElementById('future_date');
+    if (inlineDatepickerEl && futureDateHidden && typeof flatpickr !== 'undefined') {
+        flatpickr(inlineDatepickerEl, {
+            inline: true,
+            dateFormat: 'Y-m-d',
+            defaultDate: futureDateHidden.value || undefined,
+            onChange: function (selectedDates, dateStr) {
+                futureDateHidden.value = dateStr;
+            }
+        });
+    }
+
     if (predictionForm) {
         predictionForm.addEventListener('submit', function () {
             if (loader) {
@@ -56,7 +70,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Chart.js implementation
     const ctx = document.getElementById('priceChart');
+    const chartContainer = ctx ? ctx.parentElement : null;
     if (ctx && typeof chartData !== 'undefined' && chartData.labels.length > 0) {
+        if (chartContainer) {
+            chartContainer.classList.add('has-chart');
+        }
         const datasets = chartData.datasets.map(ds => ({
             label: ds.label,
             data: ds.data,
@@ -100,5 +118,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
+    } else if (chartContainer) {
+        chartContainer.classList.remove('has-chart');
     }
 });
